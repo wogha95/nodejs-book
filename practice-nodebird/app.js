@@ -8,6 +8,7 @@ const dotenv = require("dotenv");
 
 const pageRouter = require("./routes/page");
 const app = express();
+const sequelize = require("./models").sequelize;
 
 // .env 파일 설정
 dotenv.config();
@@ -21,6 +22,16 @@ nunjucks.configure("views", {
   express: app,
   watch: true,
 });
+
+// DB 연결
+sequelize
+  .sync({ force: false })
+  .then(() => {
+    console.log("데이터베이스 연결 성공");
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 // logger 설정
 app.use(morgan("dev"));
