@@ -5,13 +5,19 @@ const path = require("path");
 const session = require("express-session");
 const nunjucks = require("nunjucks");
 const dotenv = require("dotenv");
+const passport = require("passport");
 
 const pageRouter = require("./routes/page");
+const authRouter = require("./routes/auth");
 const app = express();
 const sequelize = require("./models").sequelize;
+const passportConfig = require("./passport");
 
 // .env 파일 설정
 dotenv.config();
+
+// 패스포트 설정
+passportConfig();
 
 // port 설정
 app.set("port", process.env.PORT || 8001);
@@ -55,8 +61,13 @@ app.use(
   })
 );
 
+// passport 초기 설정 및 세션 연결
+app.use(passport.initialize()); // req.user req.login req.logout req.isAuthenticated 자동 추가됨
+app.use(passport.session()); // connect.sid 세션 쿠키가 브라우저로 전송됨
+
 // view 라우터 설정
 app.use("/", pageRouter);
+app.use("/auth", authRouter);
 
 // 404 처리 미들웨어
 app.use((req, res, next) => {
