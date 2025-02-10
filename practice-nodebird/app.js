@@ -9,6 +9,8 @@ const passport = require("passport");
 
 const pageRouter = require("./routes/page");
 const authRouter = require("./routes/auth");
+const postRouter = require("./routes/post");
+const userRouter = require("./routes/user");
 const app = express();
 const sequelize = require("./models").sequelize;
 const passportConfig = require("./passport");
@@ -44,6 +46,7 @@ app.use(morgan("dev"));
 
 // 파싱 관련 설정
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/img", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -68,6 +71,8 @@ app.use(passport.session()); // connect.sid 세션 쿠키가 브라우저로 전
 // view 라우터 설정
 app.use("/", pageRouter);
 app.use("/auth", authRouter);
+app.use("/post", postRouter);
+app.use("/user", userRouter);
 
 // 404 처리 미들웨어
 app.use((req, res, next) => {
